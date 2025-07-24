@@ -393,7 +393,15 @@ if __name__ == "__main__":
         next_doc = "sitemap.html"
         if i < len(files) - 1:
             next_doc = translate_page_name(Path(files[i + 1].stem))
-        save_page(filename.stem, title, page_html, previous_doc, next_doc, f"{i + 1} / {len(files)}", has_home)
+        page_number = f"{i + 1} / {len(files)}"
+        if file.stem != "home":
+            short_title = title
+            if len(title) > 30:
+                title = title[0:27] + "..."
+            page_number += f" – {title}"
+        else:
+            page_number += f" – Homepage"
+        save_page(filename.stem, title, page_html, previous_doc, next_doc, page_number, has_home)
 
     # Create index
     page_html = "<h1>Index</h1>\n<ol>"
