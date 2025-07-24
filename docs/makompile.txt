@@ -13,7 +13,12 @@ To create a Makompile project, you need the following directory structure:
 Inside `/docs` you are supposed to create as many `.txt` files as you want. Make
 sure their contents are formatted used the Makompile format (more on this below).
 The name of the `.txt` file **MUST** be in lowercase.
-The name of the `.txt` file will be the title of the page as well.
+
+If you have a file called `home.txt`, this will also act as the homepage
+of your website.
+
+For technical reasons, you cannot have a file named `index.txt` in your `/docs` directory.
+You've been warned!
 
 ## Compiling your Makompile Project
 

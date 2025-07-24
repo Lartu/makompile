@@ -40,7 +40,7 @@ def make_link(text: str, destination: str) -> str:
     if destination.lower().strip() in document_names:
         if text == destination:
             text = text.upper()
-        destination = Path(destination.lower().strip()).with_suffix(".html")
+        destination = translate_page_name(Path(destination.lower().strip()))
         return f"<a href=\"{destination}\">{text}</a>"
     return f"<a href=\"{destination}\" target=_blank>{text}</a>"
 
@@ -293,9 +293,12 @@ def turn_file_into_sections(file_contents: str) -> List[str]:
     return sections
 
 
-def save_page(filename_stem, title, page_html, previous_doc, next_doc, page_number=""):
+def save_page(filename_stem, title, page_html, previous_doc, next_doc, page_number="", link_home=False):
     now = datetime.now()
     compiled_date = now.strftime("%a %b %d %H:%M:%S %z %Y")
+    home_link = ""
+    if link_home:
+        home_link = "[<a href=\"index.html\">Home</a>]"
     page_html = f"""
     <html>
     <head>
@@ -310,7 +313,7 @@ def save_page(filename_stem, title, page_html, previous_doc, next_doc, page_numb
 
     <div id="header-div">
         <span id="page-number">{page_number}</span>
-        <span>[<a href=sitemap.html>Home</a>]
+        <span>{home_link}
         [<a href=sitemap.html>Index</a>]
         [<a href="{previous_doc}">←</a>]
         [<a href="{next_doc}">→</a>]
@@ -328,8 +331,14 @@ def save_page(filename_stem, title, page_html, previous_doc, next_doc, page_numb
     </html>
     """
     Path(RESULT_DIRECTORY).mkdir(parents=True, exist_ok=True)
-    with open(Path(RESULT_DIRECTORY) / Path(filename_stem).with_suffix(".html"), "w") as f:
+    with open(Path(RESULT_DIRECTORY) / translate_page_name(Path(filename_stem)), "w") as f:
         f.write(page_html)
+
+
+def translate_page_name(filename):
+    if str(filename) == "home":
+        return "index.html"
+    return filename.with_suffix(".html")
 
 
 if __name__ == "__main__":
@@ -348,14 +357,20 @@ if __name__ == "__main__":
     document_names = []
     for file in files:
         document_names.append(file.stem.lower())
+    document_titles = {}
 
     if not files:
         error(f"Documents directory at '{DOCS_DIRECTORY}' doesn't contain any .txt files.")
+
+    has_home = "home" in document_names
+
+    if "index" in document_names:
+        error(f"You cannot have a file called 'index.txt' in your '{DOCS_DIRECTORY}' documents directory.")
     
     for i in range(0, len(files)):
         file = files[i]
         page_html = ""
-        title = str(file.stem).title()
+        title = ""
         filename = Path(file)
         if str(filename) != str(filename).lower():
             error(f"The filename '{file}' is not in lowercase.")
@@ -366,24 +381,31 @@ if __name__ == "__main__":
                     section_html = section
                 else:
                     section_html = compile_section(section)
+                if section_html[0:4] == "<h1>":
+                    title = section_html[4:-5]
                 page_html += "\n" + section_html
+        if not title:
+            title = str(file.stem).title()
+        document_titles[filename] = title
         previous_doc = "sitemap.html"
         if i > 0:
-            previous_doc = Path(files[i - 1].stem).with_suffix(".html")
+            previous_doc = translate_page_name(Path(files[i - 1].stem))
         next_doc = "sitemap.html"
         if i < len(files) - 1:
-            next_doc = Path(files[i + 1].stem).with_suffix(".html")
-        save_page(filename.stem, title, page_html, previous_doc, next_doc, f"{i + 1} / {len(files)}")
+            next_doc = translate_page_name(Path(files[i + 1].stem))
+        save_page(filename.stem, title, page_html, previous_doc, next_doc, f"{i + 1} / {len(files)}", has_home)
 
     # Create index
     page_html = "<h1>Index</h1>\n<ol>"
     for file in files:
-        page_path = Path(file.stem).with_suffix(".html")
-        page_title = file.stem.title()
+        page_path = translate_page_name(Path(file.stem))
+        page_title = document_titles[file]
+        if file.stem == "home":
+            page_title += " <i><small>(Homepage)</small></i>"
         page_html += f"\n<li><a href=\"{page_path}\">{page_title}</a></li>"
     page_html += "\n</ol>"
-    previous_doc = Path(files[- 1].stem).with_suffix(".html")
-    next_doc = Path(files[0].stem).with_suffix(".html")
-    save_page("sitemap", "Index", page_html, previous_doc, next_doc, "Index")
+    previous_doc = translate_page_name(Path(files[- 1].stem))
+    next_doc = translate_page_name(Path(files[0].stem))
+    save_page("sitemap", "Index", page_html, previous_doc, next_doc, "Index", has_home)
 
         
