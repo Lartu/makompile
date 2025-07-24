@@ -322,7 +322,7 @@ def save_page(filename_stem, title, page_html, previous_doc, next_doc, page_numb
     <hr>
 
     <div id="footer">
-        Page compiled using <a href=makompile.html>Makompile</a> on <i>{compiled_date}</i>.
+        Page compiled using <a href="https://github.com/lartu/makompile" target=_blank>Makompile</a> on <i>{compiled_date}</i>.
     </div>
     </body>
     </html>
