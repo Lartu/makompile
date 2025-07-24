@@ -1,0 +1,56 @@
+html {
+    margin: none;
+    border-left: 40px solid maroon;
+}
+
+body {
+    max-width: 800px;
+    padding: 2rem;
+    box-sizing: border-box;
+    background-color: white;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+img {
+    width: auto;
+    max-width: 80%;
+}
+
+a {
+    color: blue;
+    text-decoration: none;
+}
+
+a:visited {
+    color: maroon;
+}
+
+#header-div {
+    text-align: right;
+    display: flex;
+    justify-content: space-between;
+}
+
+#header-div a{
+    color: blue;
+}
+
+#footer {
+    font-size: 10pt;
+}
+
+#page-number {
+    font-style: italic;
+}
+
+code, pre{
+    background-color: #EEE;
+    color: #777;
+    padding: 2px;
+    border-radius: 4px;
+}
+
+pre{
+    padding: 10px;
+}

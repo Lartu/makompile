@@ -1,0 +1,130 @@
+[[ img ../assets/makompile_logo_1b.png ]]
+
+Makompile is very easy to use. You can use Makompile to create your own websites.
+
+Makompile documents are written in plain `.txt` files. Easy to read, easy to edit.
+To create a Makompile project, you need the following directory structure:
+
+* __(the root of your project)__
+  * `/docs` __(you will store your `.txt` files here)__
+  * `styles.css` __(you will use this file to style your website)__
+  * `makompile.py` __(the Makompile compiler)__
+
+Inside `/docs` you are supposed to create as many `.txt` files as you want. Make
+sure their contents are formatted used the Makompile format (more on this below).
+The name of the `.txt` file **MUST** be in lowercase.
+The name of the `.txt` file will be the title of the page as well.
+
+## Compiling your Makompile Project
+
+To compile your Makompile project just run `python3 makompile.py` from the
+root of your project. A `/web` directory will be created with all your site inside
+of it.
+
+## The Makompile Document Format
+
+### Titles
+
+Lines that start with `#` are titles. They look very big.
+
+Lines that start with `##` are subtitles. They look big.
+
+Lines that start with `###` are sub-subtitles. They look somewhat big.
+
+### Links
+
+Links to pages within your website are written `[Like This]`, assuming a file named
+`like this.txt` exists in your `/docs` directory. `[LIKE THIS]` and `[LiKe ThIs]`
+point to the same page because the intralinks are case-insensitive. They look [Like This].
+
+They can also link to pages outside your website. For example `[https://github.com]` will link to
+[https://github.com]. But that doesn't look nice, does it?
+
+If you want to change the displayed text of a link, you can do it like this: `[Visit GitHub | https://github.com]`
+or `[visit the page that was called "Like This" | Like This]`. Now our [GitHub | https://github.com] link looks
+much better!
+
+### Lists
+
+Lists in Makompile are created using `*` or `%` as bullets. `*` is used for **unordered**
+lists and `%` is used for **ordered** lists.
+
+There must not be any
+empty lines between list elements, otherwise multiple lists will be created. Lists
+cannot mix different bullet types. Sublists can be created by adding **two (2)**
+spaces before the bullet. Sub-sublists by adding **four (2)**. Sub-sub-sublists by
+adding six(6), and so on and so on. For example:
+
+```
+* This is an unordered list element.
+* This is another element.
+  * Oops! This element has a subelement!
+  * Another one??
+    * What is happening? A new sublist!
+  * That one was short.
+* Never mind.
+
+% This is a different list!
+% Indeed it is!
+  % With a sublist in it!
+```
+
+That list will be rendered like this:
+
+* This is an unordered list element.
+* This is another element.
+  * Oops! This element has a subelement!
+  * Another one??
+    * What is happening? A new sublist!
+  * That one was short.
+* Never mind.
+
+% This is a different list!
+% Indeed it is!
+  % With a sublist in it!
+
+### Images
+
+To embed images in your Makompile document, use: `[[ img path_to_image ]]`
+
+For example: `[[ img images/makompile_logo.png ]]`
+
+Pictures also support other paramenters:
+
+* Use `alt` for **alt text**. For example: `[[ img images/makompile_logo.png | alt The logo of Makompile ]]`
+* Use `link` to create **link images**. For example: `[[ img google_logo.png | link https://google.com ]]`
+* Use `class` to set a **CSS class** for this image element. For example: `[[ img picture.png | class my_picture ]]`
+
+These parameters can also be combined in any order:
+
+`[[img mako.png | alt Mako from Eterspire! | link https://eterspire.com | class character]]`
+
+### Styling
+
+Makompile also supports __italic text__ (`__italic text__`), **bold text** (`**bold text**`)
+and _*small text*_ (`_*small text*_`). Inline code can be created with backticks, like this:
+
+```
+`This is code`
+```
+
+While multiline code can be written by writing a line with three backticks, then in the next
+lines the code, and then closing it with another line that's just three backticks. Like this:
+
+```
+# ```
+# This text will be formatted as code.
+# The backticks must be the only thing in the line. I'm adding # before
+# each line here so that the ``` inside this code section will not close
+# the code section.
+# ```
+```
+
+That's it!
+
+## The Makompile Source Code
+
+Makompile is a single Python file. Visit the [GitHub Repository | https://github.com/lartu/makompile] to check it.
+Pull requests are welcome, as are bug reports, issues or whatever.
+
+Makompile was created by Lartu over the course of four hours on July 24, 2025 (from 1 am to 5 am).
