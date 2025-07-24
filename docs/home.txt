@@ -17,11 +17,9 @@ If I have any thoughts I'd like to share, I'll post them [here | thoughts].
 
 ## Nerd info
 
-* The source code for this website can be found [here | https://github.com/lartu/lartu.github.io].
-  * It's generated using [Makompile | https://github.com/Lartu/makompile].
-  A list element might have multiple lines btw.
-    * This is a sublist!!
-  * This is not!
-* The `lartunet` is part of the [LOW TECH WEBRING | https://emreed.net/LowTech_Directory]!
+The source code for this website can be found [here | https://github.com/lartu/lartu.github.io].
+It's generated using [Makompile | https://github.com/Lartu/makompile].
+
+The lartunet is part of the [LOW TECH WEBRING | https://emreed.net/LowTech_Directory]!
 
 

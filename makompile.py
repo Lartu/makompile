@@ -325,7 +325,25 @@ def save_page(filename_stem, title, page_html, previous_doc, next_doc, page_numb
     <hr>
 
     <div id="footer">
-        Page compiled using <a href="https://github.com/lartu/makompile" target=_blank>Makompile</a> on <i>{compiled_date}</i>.
+        <table style="
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            padding: 0;
+            margin: 0;
+            font: inherit;
+        ">
+            <tr style="padding: 0; margin: 0;">
+                <td style="padding: 0; margin: 0; font: inherit;">
+                    Page compiled using <a href="https://github.com/lartu/makompile" target=_blank>Makompile</a> on <i>{compiled_date}</i>.
+                </td>
+                <td style="padding: 0; margin: 0; font: inherit; text-align: right;">
+                    <a href="https://github.com/lartu/makompile" target=_blank>
+                        <img src="../assets/makompile_badge.png">
+                    </a>
+                </td>
+            </tr>
+        </table>
     </div>
     </body>
     </html>
