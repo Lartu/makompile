@@ -1,4 +1,4 @@
-[[ img ../assets/makompile_logo_1b.png ]]
+[[ img images/makompile_logo.png ]]
 
 Makompile is very easy to use. You can use Makompile to create your own websites.
 
@@ -6,7 +6,8 @@ Makompile documents are written in plain `.txt` files. Easy to read, easy to edi
 To create a Makompile project, you need the following directory structure:
 
 * __(the root of your project)__
-  * `/docs` __(you will store your `.txt` files here)__
+  * `/source` __(you will store your `.txt` files here)__
+  * `/include` __(optional, see below)__
   * `styles.css` __(you will use this file to style your website)__
   * `makompile.py` __(the Makompile compiler)__
 
@@ -17,13 +18,16 @@ The name of the `.txt` file **MUST** be in lowercase.
 If you have a file called `home.txt`, this will also act as the homepage
 of your website.
 
+If you have a folder called `/include`, the contents of that folder will be copied into the
+`/docs` folder every time you rebuild your site.
+
 For technical reasons, you cannot have a file named `index.txt` in your `/docs` directory.
 You've been warned!
 
 ## Compiling your Makompile Project
 
 To compile your Makompile project just run `python3 makompile.py` from the
-root of your project. A `/web` directory will be created with all your site inside
+root of your project. A `/docs` directory will be created with all your site inside
 of it.
 
 ## The Makompile Document Format

@@ -6,6 +6,9 @@
 #         \/     \/     \/           \/|__|                \/ 
 # A static website / personal wiki generator based on txt files.
 # 24L25
+# TO-DO:
+# - If the file is a local link and is not found (relative), become red and crossed.
+# - If the file is external, add an arrow or something.
 
 from typing import List, Dict, Any
 from enum import Enum
@@ -13,10 +16,13 @@ import re
 import sys
 from pathlib import Path
 from datetime import datetime
+import os
+import shutil
 
 
-DOCS_DIRECTORY = "docs"
-RESULT_DIRECTORY = "web"
+SOURCE_DIRECTORY = "source"
+RESULT_DIRECTORY = "docs"
+INCLUDED_FOLDER = "include"
 
 
 class SCSET(Enum):  # "Section Compilation Settings"
@@ -38,8 +44,6 @@ def error(message: str):
 
 def make_link(text: str, destination: str) -> str:
     if destination.lower().strip() in document_names:
-        if text == destination:
-            text = text.upper()
         destination = translate_page_name(Path(destination.lower().strip()))
         return f"<a href=\"{destination}\">{text}</a>"
     return f"<a href=\"{destination}\" target=_blank>{text}</a>"
@@ -93,7 +97,7 @@ def compile_section(section: str, settings: Dict[SCSET, Any] = {}, code_match_re
     # +------+
     # | Code |
     # +------+
-    code_matches = re.findall(r'`.*?`', section)
+    code_matches = re.findall(r'`.*?`', section, re.DOTALL)
     for code_match in code_matches:
         tag_contents = code_match[1:-1].strip()
         code_match_replacements.append(tag_contents)
@@ -102,7 +106,7 @@ def compile_section(section: str, settings: Dict[SCSET, Any] = {}, code_match_re
     # +-----------+
     # | Bold Text |
     # +-----------+
-    code_matches = re.findall(r'\*\*.*?\*\*', section)
+    code_matches = re.findall(r'\*\*.*?\*\*', section, re.DOTALL)
     for code_match in code_matches:
         tag_contents = code_match[2:-2].strip()
         section = section.replace(code_match, f"<b>{tag_contents}</b>")
@@ -110,7 +114,7 @@ def compile_section(section: str, settings: Dict[SCSET, Any] = {}, code_match_re
     # +------------+
     # | Small Text |
     # +------------+
-    code_matches = re.findall(r'_\*.*?\*_', section)
+    code_matches = re.findall(r'_\*.*?\*_', section, re.DOTALL)
     for code_match in code_matches:
         tag_contents = code_match[2:-2].strip()
         section = section.replace(code_match, f"<small>{tag_contents}</small>")
@@ -177,7 +181,7 @@ def compile_section(section: str, settings: Dict[SCSET, Any] = {}, code_match_re
     # +--------+
     # | Images |
     # +--------+
-    image_matches = re.findall(r'\[\[.*?\]\]', section)
+    image_matches = re.findall(r'\[\[.*?\]\]', section, re.DOTALL)
     for image_match in image_matches:
         tag_contents = image_match[2:-2].strip()
         if not tag_contents:
@@ -215,7 +219,7 @@ def compile_section(section: str, settings: Dict[SCSET, Any] = {}, code_match_re
     # +-------+
     # | Links |
     # +-------+
-    link_matches = re.findall(r'\[.*?\]', section)
+    link_matches = re.findall(r'\[.*?\]', section, re.DOTALL)
     for link_match in link_matches:
         tag_contents = link_match[1:-1].strip()
         if not tag_contents:
@@ -233,7 +237,7 @@ def compile_section(section: str, settings: Dict[SCSET, Any] = {}, code_match_re
     # +---------+
     # | Italics |
     # +---------+
-    code_matches = re.findall(r'__.*?__', section)
+    code_matches = re.findall(r'__.*?__', section, re.DOTALL)
     for code_match in code_matches:
         tag_contents = code_match[2:-2].strip()
         section = section.replace(code_match, f"<i>{tag_contents}</i>")
@@ -298,7 +302,7 @@ def save_page(filename_stem, title, page_html, previous_doc, next_doc, page_numb
     compiled_date = now.strftime("%a %b %d %H:%M:%S %z %Y")
     home_link = ""
     if link_home:
-        home_link = "[<a href=\"index.html\">Home</a>]"
+        home_link = "<a href=\"index.html\">Home</a> |"
     page_html = f"""
     <html>
     <head>
@@ -312,11 +316,11 @@ def save_page(filename_stem, title, page_html, previous_doc, next_doc, page_numb
     <body>
 
     <div id="header-div">
+        {home_link}
+        <a href=sitemap.html>Index</a> |
+        <a href="{previous_doc}">←</a> |
+        <a href="{next_doc}">→</a> |
         <span id="page-number">{page_number}</span>
-        <span>{home_link}
-        [<a href=sitemap.html>Index</a>]
-        [<a href="{previous_doc}">←</a>]
-        [<a href="{next_doc}">→</a>]
     </div>
 
     <hr>
@@ -325,25 +329,10 @@ def save_page(filename_stem, title, page_html, previous_doc, next_doc, page_numb
     <hr>
 
     <div id="footer">
-        <table style="
-            width: 100%;
-            border-collapse: collapse;
-            border-spacing: 0;
-            padding: 0;
-            margin: 0;
-            font: inherit;
-        ">
-            <tr style="padding: 0; margin: 0;">
-                <td style="padding: 0; margin: 0; font: inherit;">
-                    Page compiled using <a href="https://github.com/lartu/makompile" target=_blank>Makompile</a> on <i>{compiled_date}</i>.
-                </td>
-                <td style="padding: 0; margin: 0; font: inherit; text-align: right;">
-                    <a href="https://github.com/lartu/makompile" target=_blank>
-                        <img src="../assets/makompile_badge.png">
-                    </a>
-                </td>
-            </tr>
-        </table>
+        <a href="https://github.com/lartu/makompile" target=_blank>
+            <img src="images/makompile_badge.png">
+        </a>
+        Page compiled using <a href="https://github.com/lartu/makompile" target=_blank>Makompile</a> on <i>{compiled_date}</i>.
     </div>
     </body>
     </html>
@@ -359,6 +348,31 @@ def translate_page_name(filename):
     return filename.with_suffix(".html")
 
 
+def copy_included():
+    # Ensure RESULT_DIRECTORY exists
+    if not os.path.exists(RESULT_DIRECTORY):
+        os.makedirs(RESULT_DIRECTORY)
+    else:
+        # Delete all contents inside RESULT_DIRECTORY
+        for item in os.listdir(RESULT_DIRECTORY):
+            item_path = os.path.join(RESULT_DIRECTORY, item)
+            if os.path.isfile(item_path) or os.path.islink(item_path):
+                os.unlink(item_path)
+            elif os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+
+    # Ensure INCLUDED_FOLDER exists
+    if os.path.exists(INCLUDED_FOLDER):
+        # Copy contents from INCLUDED_FOLDER to RESULT_DIRECTORY
+        for item in os.listdir(INCLUDED_FOLDER):
+            src_path = os.path.join(INCLUDED_FOLDER, item)
+            dest_path = os.path.join(RESULT_DIRECTORY, item)
+            if os.path.isdir(src_path):
+                shutil.copytree(src_path, dest_path)
+            else:
+                shutil.copy2(src_path, dest_path)
+
+
 if __name__ == "__main__":
     try:
         with open('styles.css', 'r') as f:
@@ -366,9 +380,9 @@ if __name__ == "__main__":
     except FileNotFoundError:
         error("CSS file 'styles.css' not found.")
 
-    docs_path = Path(DOCS_DIRECTORY)
+    docs_path = Path(SOURCE_DIRECTORY)
     if not docs_path.exists() or not docs_path.is_dir():
-        error(f"Documents directory at '{DOCS_DIRECTORY}' not found.")
+        error(f"Source directory at '{SOURCE_DIRECTORY}' not found.")
 
     files = docs_path.glob("*.txt")
     files = sorted(files)
@@ -378,12 +392,14 @@ if __name__ == "__main__":
     document_titles = {}
 
     if not files:
-        error(f"Documents directory at '{DOCS_DIRECTORY}' doesn't contain any .txt files.")
+        error(f"Source directory at '{SOURCE_DIRECTORY}' doesn't contain any .txt files.")
 
     has_home = "home" in document_names
 
     if "index" in document_names:
-        error(f"You cannot have a file called 'index.txt' in your '{DOCS_DIRECTORY}' documents directory.")
+        error(f"You cannot have a file called 'index.txt' in your '{SOURCE_DIRECTORY}' source directory.")
+
+    copy_included()
     
     for i in range(0, len(files)):
         file = files[i]
@@ -399,7 +415,7 @@ if __name__ == "__main__":
                     section_html = section
                 else:
                     section_html = compile_section(section)
-                if section_html[0:4] == "<h1>":
+                if section_html[0:4] == "<h1>" and not title:
                     title = section_html[4:-5]
                 page_html += "\n" + section_html
         if not title:
@@ -413,9 +429,6 @@ if __name__ == "__main__":
             next_doc = translate_page_name(Path(files[i + 1].stem))
         page_number = f"{i + 1} / {len(files)}"
         if file.stem != "home":
-            short_title = title
-            if len(title) > 30:
-                title = title[0:27] + "..."
             page_number += f" – {title}"
         else:
             page_number += f" – Homepage"
@@ -433,5 +446,3 @@ if __name__ == "__main__":
     previous_doc = translate_page_name(Path(files[- 1].stem))
     next_doc = translate_page_name(Path(files[0].stem))
     save_page("sitemap", "Index", page_html, previous_doc, next_doc, "Index", has_home)
-
-        

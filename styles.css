@@ -1,6 +1,7 @@
 html {
     margin: none;
     border-left: 40px solid maroon;
+    min-height: 100%;
 }
 
 body {
@@ -27,39 +28,34 @@ a:visited {
 }
 
 #header-div {
-    text-align: right;
-    display: flex;
-    justify-content: space-between;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-#header-div a, #footer a{
+#header-div a,
+#footer a {
     color: blue;
 }
 
 #footer {
     font-size: 10pt;
-    display: flex;
-    justify-content: space-between;
-}
-
-#footer img {
-    max-height: 100%;
-    height: auto;
-    width: auto;
-    flex-shrink: 0;
 }
 
 #page-number {
     font-style: italic;
+    font-size: 10pt;
 }
 
-code, pre{
+code,
+pre {
     background-color: #EEE;
     color: #777;
     padding: 2px;
     border-radius: 4px;
 }
 
-pre{
+pre {
     padding: 10px;
 }

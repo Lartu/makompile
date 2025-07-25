@@ -1,0 +1,269 @@
+
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Makompile</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <style>
+    html {
+    margin: none;
+    border-left: 40px solid maroon;
+    min-height: 100%;
+}
+
+body {
+    max-width: 800px;
+    padding: 2rem;
+    box-sizing: border-box;
+    background-color: white;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+img {
+    width: auto;
+    max-width: 80%;
+}
+
+a {
+    color: blue;
+    text-decoration: none;
+}
+
+a:visited {
+    color: purple;
+}
+
+#header-div {
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#header-div a,
+#footer a {
+    color: blue;
+}
+
+#footer {
+    font-size: 10pt;
+}
+
+#page-number {
+    font-style: italic;
+    font-size: 10pt;
+}
+
+code,
+pre {
+    background-color: #EEE;
+    color: #777;
+    padding: 2px;
+    border-radius: 4px;
+}
+
+pre {
+    padding: 10px;
+}
+    </style>
+    <body>
+
+    <div id="header-div">
+        
+        <a href=sitemap.html>Index</a> |
+        <a href="sitemap.html">←</a> |
+        <a href="sitemap.html">→</a> |
+        <span id="page-number">1 / 1 – Makompile</span>
+    </div>
+
+    <hr>
+    
+<p><img src="images/makompile_logo.png"></p>
+<p>Makompile is very easy to use. You can use Makompile to create your own websites.</p>
+<p>Makompile documents are written in plain <code>.txt</code> files. Easy to read, easy to edit.
+To create a Makompile project, you need the following directory structure:</p>
+<ul>
+<li>
+
+<i>(the root of your project)</i>
+<ul>
+<li>
+
+<code>/source</code> <i>(you will store your <code>.txt</code> files here)</i>
+</li>
+</ul>
+<ul>
+<li>
+
+<code>/include</code> <i>(optional, see below)</i>
+</li>
+</ul>
+<ul>
+<li>
+
+<code>styles.css</code> <i>(you will use this file to style your website)</i>
+</li>
+</ul>
+<ul>
+<li>
+
+<code>makompile.py</code> <i>(the Makompile compiler)</i>
+</li>
+</ul>
+</li>
+</ul>
+<p>Inside <code>/docs</code> you are supposed to create as many <code>.txt</code> files as you want. Make
+sure their contents are formatted used the Makompile format (more on this below).
+The name of the <code>.txt</code> file <b>MUST</b> be in lowercase.</p>
+<p>If you have a file called <code>home.txt</code>, this will also act as the homepage
+of your website.</p>
+<p>If you have a folder called <code>/include</code>, the contents of that folder will be copied into the
+<code>/docs</code> folder every time you rebuild your site.</p>
+<p>For technical reasons, you cannot have a file named <code>index.txt</code> in your <code>/docs</code> directory.
+You've been warned!</p>
+<h2>Compiling your Makompile Project</h2>
+<p>To compile your Makompile project just run <code>python3 makompile.py</code> from the
+root of your project. A <code>/docs</code> directory will be created with all your site inside
+of it.</p>
+<h2>The Makompile Document Format</h2>
+<h3>Titles</h3>
+<p>Lines that start with <code>#</code> are titles. They look very big.</p>
+<p>Lines that start with <code>##</code> are subtitles. They look big.</p>
+<p>Lines that start with <code>###</code> are sub-subtitles. They look somewhat big.</p>
+<h3>Links</h3>
+<p>Links to pages within your website are written <code>[Like This]</code>, assuming a file named
+<code>like this.txt</code> exists in your <code>/docs</code> directory. <code>[LIKE THIS]</code> and <code>[LiKe ThIs]</code>
+point to the same page because the intralinks are case-insensitive. They look <a href="Like This" target=_blank>Like This</a>.</p>
+<p>They can also link to pages outside your website. For example <code>[https://github.com]</code> will link to
+<a href="https://github.com" target=_blank>https://github.com</a>. But that doesn't look nice, does it?</p>
+<p>If you want to change the displayed text of a link, you can do it like this: <code>[Visit GitHub | https://github.com]</code>
+or <code>[visit the page that was called "Like This" | Like This]</code>. Now our <a href="https://github.com" target=_blank>GitHub</a> link looks
+much better!</p>
+<h3>Lists</h3>
+<p>Lists in Makompile are created using <code>*</code> or <code>%</code> as bullets. <code>*</code> is used for <b>unordered</b>
+lists and <code>%</code> is used for <b>ordered</b> lists.</p>
+<p>There must not be any
+empty lines between list elements, otherwise multiple lists will be created. Lists
+cannot mix different bullet types. Sublists can be created by adding <b>two (2)</b>
+spaces before the bullet. Sub-sublists by adding <b>four (2)</b>. Sub-sub-sublists by
+adding six(6), and so on and so on. For example:</p>
+<pre>
+* This is an unordered list element.
+* This is another element.
+  * Oops! This element has a subelement!
+  * Another one??
+    * What is happening? A new sublist!
+  * That one was short.
+* Never mind.
+
+% This is a different list!
+% Indeed it is!
+  % With a sublist in it!</pre>
+<p>That list will be rendered like this:</p>
+<ul>
+<li>
+
+This is an unordered list element.
+</li>
+<li>
+
+This is another element.
+<ul>
+<li>
+
+Oops! This element has a subelement!
+</li>
+</ul>
+<ul>
+<li>
+
+Another one??
+<ul>
+<li>
+
+What is happening? A new sublist!
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+
+That one was short.
+</li>
+</ul>
+</li>
+<li>
+
+Never mind.
+</li>
+</ul>
+<ol>
+<li>
+
+This is a different list!
+</li>
+<li>
+
+Indeed it is!
+<ol>
+<li>
+
+With a sublist in it!
+</li>
+</ol>
+</li>
+</ol>
+<h3>Images</h3>
+<p>To embed images in your Makompile document, use: <code>[[ img path_to_image ]]</code></p>
+<p>For example: <code>[[ img images/makompile_logo.png ]]</code></p>
+<p>Pictures also support other paramenters:</p>
+<ul>
+<li>
+
+Use <code>alt</code> for <b>alt text</b>. For example: <code>[[ img images/makompile_logo.png | alt The logo of Makompile ]]</code>
+</li>
+<li>
+
+Use <code>link</code> to create <b>link images</b>. For example: <code>[[ img google_logo.png | link https://google.com ]]</code>
+</li>
+<li>
+
+Use <code>class</code> to set a <b>CSS class</b> for this image element. For example: <code>[[ img picture.png | class my_picture ]]</code>
+</li>
+</ul>
+<p>These parameters can also be combined in any order:</p>
+<p><code>[[img mako.png | alt Mako from Eterspire! | link https://eterspire.com | class character]]</code></p>
+<h3>Styling</h3>
+<p>Makompile also supports <i>italic text</i> (<code>__italic text__</code>), <b>bold text</b> (<code>**bold text**</code>)
+and <small>small text</small> (<code>_*small text*_</code>). Inline code can be created with backticks, like this:</p>
+<pre>
+`This is code`</pre>
+<p>While multiline code can be written by writing a line with three backticks, then in the next
+lines the code, and then closing it with another line that's just three backticks. Like this:</p>
+<pre>
+# ```
+# This text will be formatted as code.
+# The backticks must be the only thing in the line. I'm adding # before
+# each line here so that the ``` inside this code section will not close
+# the code section.
+# ```</pre>
+<p>That's it!</p>
+<h2>The Makompile Source Code</h2>
+<p>Makompile is a single Python file. Visit the <a href="https://github.com/lartu/makompile" target=_blank>GitHub Repository</a> to check it.
+Pull requests are welcome, as are bug reports, issues or whatever.</p>
+<p>Makompile was created by Lartu over the course of four hours on July 24, 2025 (from 1 am to 5 am).</p>
+
+    <hr>
+
+    <div id="footer">
+        <a href="https://github.com/lartu/makompile" target=_blank>
+            <img src="images/makompile_badge.png">
+        </a>
+        Page compiled using <a href="https://github.com/lartu/makompile" target=_blank>Makompile</a> on <i>Fri Jul 25 18:41:06  2025</i>.
+    </div>
+    </body>
+    </html>
+    
