@@ -31,6 +31,9 @@ If you have a folder called `/include`, the contents of that folder will be copi
 For technical reasons, you cannot have a file named `index.txt` in your `/docs` directory.
 You've been warned!
 
+Try to keep the names of your txt files in only `A-z` letters, numbers, and the characters
+`_`, `-`, `~` and `.`, otherwise some errors may arise.
+
 ## Compiling your Makompile Project
 
 To compile your Makompile project just run `python3 makompile.py` from the
