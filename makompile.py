@@ -134,10 +134,12 @@ def compile_section(section: str, settings: Dict[SCSET, Any] = {}, code_match_re
                 else:
                     list_items[-1] += f"\n{line}"
             #print("List items:", list_items)
-            if list_bullet == "*":
-                list_html = "<ul>"
-            else:
-                list_html = "<ol>"
+            list_html = ""
+            if SCSET.LIST_DEPTH not in settings or True:
+                if list_bullet == "*":
+                    list_html += "<ul>"
+                else:
+                    list_html += "<ol>"
             for list_item in list_items:
                 content = list_item[1:].strip()
                 content_lines = content.split("\n")
@@ -145,17 +147,17 @@ def compile_section(section: str, settings: Dict[SCSET, Any] = {}, code_match_re
                 list_html += "\n<li>"
                 sublist_parts = [""]
                 depth = 2 if SCSET.LIST_DEPTH not in settings else settings[SCSET.LIST_DEPTH] + 2
-                #print("Depth:", depth)
+                print("\n• Content Lines:", content_lines)
                 for content_line in content_lines:
                     if len(content_line) >= depth + 1 and content_line[0:depth+1] == f"{depth * ' '}{list_bullet}":
                         content_line = content_line[depth:]
-                        sublist_parts.append(content_line)
-                    else:
-                        sublist_parts[-1] += f"\n{content_line}"
-                #print("Sublist parts:", sublist_parts)
+                        if len(sublist_parts) == 1:
+                            sublist_parts.append("")
+                    sublist_parts[-1] += f"\n{content_line}"
+                print("• Sublist parts:", sublist_parts)
                 for sublist_part in sublist_parts:
                     list_html += "\n" + compile_section(
-                        sublist_part, 
+                        sublist_part.strip(), 
                         {
                             SCSET.NO_TITLES: True,
                             SCSET.LIST_DEPTH: depth,
@@ -164,10 +166,11 @@ def compile_section(section: str, settings: Dict[SCSET, Any] = {}, code_match_re
                         }
                     )
                 list_html += "\n</li>"
-            if list_bullet == "*":
-                list_html += "\n</ul>"
-            else:
-                list_html += "\n</ol>"
+            if SCSET.LIST_DEPTH not in settings or True:
+                if list_bullet == "*":
+                    list_html += "\n</ul>"
+                else:
+                    list_html += "\n</ol>"
             return compile_section(
                 list_html,
                 {
